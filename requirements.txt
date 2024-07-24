@@ -1,0 +1,7 @@
+apscheduler==3.10.4
+pymongo==4.8.0
+httpx==0.26.0
+loguru==0.7.2
+pydantic==2.6.0
+pydantic_core==2.16.1
+openai==1.37.0
