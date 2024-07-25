@@ -64,12 +64,13 @@ def check_translations():
     if translations:
         translations = translate_mutil_texts(translations)
         update_database(translations)
+    logger.info(f"下次执行时间: {translate_job.next_run_time}")
 
 
 if __name__ == "__main__":
     corn_config = CornConfig.load()
     scheduler = BackgroundScheduler()
-    scheduler.add_job(
+    translate_job = scheduler.add_job(
         check_translations,
         "cron",
         day=corn_config.day,
@@ -82,7 +83,8 @@ if __name__ == "__main__":
     # 启动调度器
     scheduler.start()
     logger.info("Scheduler started.")
-
+    logger.info(f"下次执行时间: {translate_job.next_run_time}")
+    
     # 保持主线程运行
     try:
         while True:
