@@ -14,11 +14,16 @@ BACKUP_CLIENT = OpenAI(
     api_key=translate_config.backup_api_key, base_url=translate_config.backup_base_url
 )
 
+CHUNK_SIZE = translate_config.chunk_size
+
 
 class Platform(Enum):
     CURSEFORGE: str = "Curseforge"
     MODRINTH: str = "Modrinth"
 
+class Mode(Enum):
+    DOWNGRADE: str = "downgrade"
+    MAIN: str = "main"
 
 class Mode(Enum):
     DOWNGRADE: str = "downgrade"
@@ -89,3 +94,45 @@ def translate_chunk(
         logger.error("Failed to translate chunk")
         logger.debug([f"{obj.model_dump_json()}\n" for obj in objs])
         return None, tokens_used
+
+
+def translate_mutil_texts(
+    objs: List[Translation], target_language="Simplified Chinese", chunk_size=CHUNK_SIZE, mode: Mode=Mode.MAIN
+):
+    failed_objs: List[Translation] = []
+    result = []
+    total_tokens = 0
+    chunks = [
+        objs[start : start + chunk_size] for start in range(0, len(objs), chunk_size)
+    ]
+    logger.debug(f"Split {len(objs)} texts into {len(chunks)} chunks")
+    for chunk in chunks:
+        translated_objs, tokens_used = translate_chunk(chunk, target_language, mode)
+        total_tokens += tokens_used
+        if translated_objs:
+            result.extend(translated_objs)
+            logger.debug(
+                f"Translated {len(translated_objs)} texts, used tokens: {tokens_used}, total tokens used: {total_tokens}"
+            )
+        else:
+            logger.debug(f"Failed to translate chunk, used tokens: {tokens_used}")
+            logger.debug(f"Switching to backup model")
+            failed_objs.extend(chunk)
+    if failed_objs:
+        chunks = [
+            failed_objs[start : start + chunk_size] for start in range(0, len(failed_objs), chunk_size)
+        ]
+        logger.debug(f"Split {len(failed_objs)} texts into {len(chunks)} chunks")
+        for chunk in chunks:
+            translated_objs, tokens_used = translate_chunk(chunk, target_language, Mode.DOWNGRADE)
+            total_tokens += tokens_used
+            if translated_objs:
+                result.extend(translated_objs)
+                logger.debug(f'Translated {len(translated_objs)} texts with backup model, used tokens: {tokens_used}, total tokens used: {total_tokens}')
+            else:
+                logger.debug(f"Failed to translate chunk with backup model, used tokens: {tokens_used}")
+    if failed_objs:
+        logger.error(f"Failed to translate {len(failed_objs)} texts")
+        logger.debug([f"{obj.model_dump_json()}\n" for obj in failed_objs])
+    logger.debug(f"Total tokens used: {total_tokens}")
+    return result
