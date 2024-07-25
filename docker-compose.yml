@@ -1,0 +1,13 @@
+services:
+  translate:
+    container_name: translate
+    image: mcim_translate
+    build:
+      context: .
+      dockerfile: ./translate-mod-summary/Dockerfile
+    restart: always
+    depends_on:
+      - mongodb
+    volumes:
+      - /opt/mcim/translate-mod-summary/config:/config
+    logging: *default-logging

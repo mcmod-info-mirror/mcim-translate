@@ -2,10 +2,11 @@
 FROM python:3-slim
 
 # Install pip requirements
-COPY requirements.txt .
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
+COPY ./translate-mod-summary/requirements.txt translate-mod-summary-requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip pip install -r translate-mod-summary-requirements.txt
 
-COPY main.py .
-COPY ./utils ./utils
+WORKDIR /translate-mod-summary
+COPY ./translate-mod-summary/main.py .
+COPY ./translate-mod-summary/utils ./utils
 
 ENTRYPOINT ["python", "main.py"]
