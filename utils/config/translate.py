@@ -2,6 +2,7 @@ import json
 import os
 from typing import Optional
 from pydantic import BaseModel, ValidationError, validator
+from loguru import logger
 
 from utils.config.constants import CONFIG_PATH
 
@@ -22,6 +23,7 @@ class TranslateConfig:
     def save(model: Translate = Translate(), target=TRANSLATE_CONFIG_PATH):
         with open(target, "w") as fd:
             json.dump(model.model_dump(), fd, indent=4)
+            logger.debug(f"TranslateConfig init at {TRANSLATE_CONFIG_PATH}")
 
     @staticmethod
     def load(target=TRANSLATE_CONFIG_PATH) -> Translate:

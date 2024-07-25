@@ -15,14 +15,15 @@ def query_database() -> List[Translation]:
     cf_result = database.get_collection("curseforge_mods").find(
         {"summary": {"$ne": None}, "translated_summary": None}
     )
-    logger.debug(f"Found {mr_result.count()} modrinth projects and {cf_result.count()} curseforge mods to translate.")
-    return [
+    result = [
         Translation("modrinth", project["_id"], project["description"])
         for project in mr_result
     ] + [
         Translation("curseforge", project["_id"], project["summary"])
         for project in cf_result
     ]
+    logger.debug(f"Found {len(result)} items to translate.")
+    return result
 
 
 def update_database(translations: List[Translation]):
@@ -53,7 +54,9 @@ def update_database(translations: List[Translation]):
             for translation in cf_result
         ]
     )
-    logger.info(f"Updated {len(mr_result)} modrinth projects and {len(cf_result)} curseforge mods.")
+    logger.info(
+        f"Updated {len(mr_result)} modrinth projects and {len(cf_result)} curseforge mods."
+    )
 
 
 def check_translations():
@@ -66,7 +69,15 @@ def check_translations():
 if __name__ == "__main__":
     corn_config = CornConfig.load()
     scheduler = BackgroundScheduler()
-    scheduler.add_job(check_translations, "cron", hour=corn_config.hour, minute=corn_config.minute, second=corn_config.second)
+    scheduler.add_job(
+        check_translations,
+        "cron",
+        day=corn_config.day,
+        hour=corn_config.hour,
+        minute=corn_config.minute,
+        second=corn_config.second,
+        timezone="Asia/Shanghai",
+    )
 
     # 启动调度器
     scheduler.start()

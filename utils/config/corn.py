@@ -1,6 +1,7 @@
 import json
 import os
 from pydantic import BaseModel, ValidationError, validator
+from loguru import logger
 
 from .constants import CONFIG_PATH
 
@@ -22,6 +23,7 @@ class CornConfig:
     ):
         with open(target, "w") as fd:
             json.dump(model.model_dump(), fd, indent=4)
+            logger.debug(f"CornConfig init at {CORN_CONFIG_PATH}")
 
     @staticmethod
     def load(target=CORN_CONFIG_PATH) -> CornConfigModel:

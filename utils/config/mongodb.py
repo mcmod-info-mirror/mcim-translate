@@ -1,6 +1,7 @@
 import json
 import os
 from pydantic import BaseModel, ValidationError, validator
+from loguru import logger
 
 from .constants import CONFIG_PATH
 
@@ -24,6 +25,7 @@ class MongodbConfig:
     ):
         with open(target, "w") as fd:
             json.dump(model.model_dump(), fd, indent=4)
+            logger.debug(f"MongodbConfig init at {MONGODB_CONFIG_PATH}")
 
     @staticmethod
     def load(target=MONGODB_CONFIG_PATH) -> MongodbConfigModel:
