@@ -2,6 +2,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from pymongo import UpdateOne
 from typing import List
 from loguru import logger
+import datetime
 
 from utils.translate import translate_mutil_texts, Translation, Platform
 from utils.database import init_engine, database
@@ -79,7 +80,7 @@ if __name__ == "__main__":
         second=corn_config.second,
         timezone="Asia/Shanghai",
     )
-
+    translate_job.modify(next_run_time=datetime.datetime.now() + datetime.timedelta(seconds=10))
     # 启动调度器
     scheduler.start()
     logger.info("Scheduler started.")
