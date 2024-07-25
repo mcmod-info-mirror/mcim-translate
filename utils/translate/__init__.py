@@ -1,6 +1,6 @@
 from openai import OpenAI
 from pydantic import BaseModel
-from typing import List, Union
+from typing import List, Union, Optional
 from enum import Enum
 
 from utils.config import TranslateConfig
@@ -24,7 +24,7 @@ class Translation(BaseModel):
     platform: Platform
     id: Union[int, str]
     original_text: str
-    translated_text: str
+    translated_text: Optional[str] = None
 
 
 def translate_text(text, target_language="Simplified Chinese"):
