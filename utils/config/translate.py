@@ -13,6 +13,9 @@ class Translate(BaseModel):
     api_key: str = "<api key>"
     base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     model: str = "qwen-plus"
+    backup_api_key: Optional[str] = None
+    backup_base_url: Optional[str] = None
+    backup_model: Optional[str] = None
     temperature: float = 0.6
     target_language: str = "Chinese"
     chunk_size: int = 75
