@@ -16,10 +16,10 @@ def query_database() -> List[Translation]:
         {"summary": {"$ne": None}, "translated_summary": None}
     )
     result = [
-        Translation("modrinth", project["_id"], project["description"])
+        Translation(platform=Platform.MODRINTH, id=project["_id"], original_text=project["description"])
         for project in mr_result
     ] + [
-        Translation("curseforge", project["_id"], project["summary"])
+        Translation(platform=Platform.CURSEFORGE, id=project["_id"], original_text=project["summary"])
         for project in cf_result
     ]
     logger.debug(f"Found {len(result)} items to translate.")
