@@ -10,4 +10,7 @@ services:
       - mongodb
     volumes:
       - /opt/mcim/translate-mod-summary/config:/config
-    logging: *default-logging
+    deploy:
+      resources:
+         limits:
+            memory: 200M
