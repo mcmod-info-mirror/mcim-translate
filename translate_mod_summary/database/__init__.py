@@ -1,4 +1,4 @@
-from utils.database.mongodb import (
+from translate_mod_summary.database.mongodb import (
     init_engine,
     database
 )

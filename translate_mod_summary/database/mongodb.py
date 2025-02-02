@@ -1,9 +1,9 @@
 from pymongo import MongoClient
 
-from utils.config.mongodb import MongodbConfig
+from translate_mod_summary.config import Config
 from loguru import logger
 
-_mongodb_config = MongodbConfig.load()
+_mongodb_config = Config.load().mongodb
 
 engine: MongoClient = None
 

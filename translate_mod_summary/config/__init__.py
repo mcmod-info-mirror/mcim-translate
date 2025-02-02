@@ -1,0 +1,53 @@
+import json
+import os
+from typing import Optional
+from pydantic import BaseModel
+from loguru import logger
+
+# 合并后的配置文件路径
+
+CONFIG_PATH = "config.json"
+
+# 单独配置模型定义
+
+class MongodbConfigModel(BaseModel):
+    host: str = "mongodb"
+    port: int = 27017
+    auth: bool = True
+    user: str = "username"
+    password: str = "password"
+    database: str = "database"
+
+class Translate(BaseModel):
+    api_key: str = "<api key>"
+    base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    model: str = "deepseek-v3"
+    enbale_backup: bool = False
+    backup_model: Optional[str] = None
+    backup_api_key: Optional[str] = None
+    backup_base_url: Optional[str] = None
+    temperature: float = 0.6
+    target_language: str = "中文"
+    chunk_size: int = 2
+
+# 合并配置模型，将三个配置嵌套在一起
+class ConfigModel(BaseModel):
+    mongodb: MongodbConfigModel = MongodbConfigModel()
+    translate: Translate = Translate()
+    interval: int = 3600 * 24
+
+class Config:
+    @staticmethod
+    def save(model: ConfigModel = ConfigModel(), target=CONFIG_PATH):
+        with open(target, "w", encoding="UTF-8") as fd:
+            json.dump(model.model_dump(), fd, indent=4)
+        logger.debug(f"Config saved at {CONFIG_PATH}")
+
+    @staticmethod
+    def load(target=CONFIG_PATH) -> ConfigModel:
+        if not os.path.exists(target):
+            Config.save(target=target)
+            return ConfigModel()
+        with open(target, "r", encoding="UTF-8") as fd:
+            data = json.load(fd)
+        return ConfigModel(**data)
