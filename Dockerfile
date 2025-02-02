@@ -1,12 +1,29 @@
-# For more information, please refer to https://aka.ms/vscode-docker-python
-FROM python:3-slim
+# 第一阶段：构建阶段
+FROM python:3.11-slim-buster AS builder
 
-# Install pip requirements
-COPY ./translate-mod-summary/requirements.txt translate-mod-summary-requirements.txt
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r translate-mod-summary-requirements.txt
+# 设置工作目录
+WORKDIR /app
 
-WORKDIR /translate-mod-summary
-COPY ./translate-mod-summary/main.py .
-COPY ./translate-mod-summary/utils ./utils
+# 复制依赖文件并安装依赖
+COPY requirements.txt .
+RUN pip config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/ \
+    && pip install --user --no-cache-dir -r requirements.txt
+
+# 复制应用程序代码
+COPY translate-mod-summary/ .
+COPY main.py .
+
+# 第二阶段：运行阶段
+FROM python:3.11-slim-buster
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制已安装的依赖
+COPY --from=builder /root/.local /root/.local
+ENV PATH=/root/.local/bin:$PATH
+
+# 复制应用程序代码
+COPY --from=builder /app /app/
 
 ENTRYPOINT ["python", "main.py"]
