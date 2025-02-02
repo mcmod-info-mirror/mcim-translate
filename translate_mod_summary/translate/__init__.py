@@ -31,7 +31,8 @@ def translate_text(text, target_language: str = translate_config.target_language
         message = [
             {
                 "role": "system",
-                "content": f"你是专业的 Minecraft 中文翻译助手，接地气地直接地将文本翻译为{target_language}给我，文本背景是 Minecraft Mod 介绍，特有名词不要翻译",
+                # "content": f"你是专业的 Minecraft 中文翻译助手，接地气地直接地将文本翻译为{target_language}给我，文本背景是 Minecraft Mod 介绍，特有名词不要翻译",
+                "content": f"Translate the text of the introduction of Minecraft Mod directly into {target_language}. Do not translate the specific nouns. NO explanations. NO notes.",
             },
             {"role": "user", "content": text},
         ]
@@ -50,7 +51,10 @@ def translate_text(text, target_language: str = translate_config.target_language
         if response:
             translated_text = response.choices[0].message.content
             usage = response.usage
+            translated_text = translated_text.replace("我的世界", "Minecraft") # 个人偏好
             return translated_text, usage.total_tokens
+        else:
+            raise Exception("Failed to get response from API")
     except Exception as e:
         log.error(e)
         return None, 0

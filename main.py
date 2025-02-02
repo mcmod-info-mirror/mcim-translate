@@ -62,7 +62,7 @@ def translate_mutil_texts(translations: List[Translation]) -> tuple[List[Transla
     return success_job, final_failed_jobs, total_used_token
 
 
-def query_modrinth_database(skip: Optional[int] = 0) -> List[Translation]:
+def query_modrinth_database() -> List[Translation]:
     # 从 modrinth_projects 中查询所有 _id 不存在于 translated_summary 中的记录
     result = database.get_collection("modrinth_projects").aggregate([
         {
@@ -85,9 +85,6 @@ def query_modrinth_database(skip: Optional[int] = 0) -> List[Translation]:
             }
         },
         {
-            "$skip": skip
-        },
-        {
             "$limit": CHUNK_SIZE
         }
     ])
@@ -102,7 +99,7 @@ def query_modrinth_database(skip: Optional[int] = 0) -> List[Translation]:
     ]
 
 
-def query_curseforge_database(skip: Optional[int] = 0) -> List[Translation]:
+def query_curseforge_database() -> List[Translation]:
     # 从 curseforge_mods 中查询所有 _id 不存在于 translated_summary 中的记录
     result = database.get_collection("curseforge_mods").aggregate([
         {
@@ -205,17 +202,19 @@ if __name__ == "__main__":
         check_modrinth_translations,
         trigger=IntervalTrigger(seconds=config.interval),
         next_run_time=datetime.datetime.now(),
+        name="modrinth_translate_job",
     )
 
     curseforge_translate_job = scheduler.add_job(
         check_curseforge_translations,
         trigger=IntervalTrigger(seconds=config.interval),
         next_run_time=datetime.datetime.now(),
+        name="curseforge_translate_job",
     )
 
     # 启动调度器
     scheduler.start()
-    log.info("Scheduler started, waiting for 10s.")
+    log.info("Scheduler started")
 
     # 保持主线程运行
     try:
