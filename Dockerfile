@@ -10,7 +10,7 @@ RUN pip config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/ \
     && pip install --user --no-cache-dir -r requirements.txt
 
 # 复制应用程序代码
-COPY translate-mod-summary/ .
+COPY translate_mod_summary/ .
 COPY main.py .
 
 # 第二阶段：运行阶段
