@@ -1,14 +1,13 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from typing import List, Optional
-from loguru import logger
 import datetime
 import time
 
 from translate_mod_summary.translate import translate_text, Translation, Platform, Mode
 from translate_mod_summary.database import init_engine, database
 from translate_mod_summary.config import Config
-
+from translate_mod_summary.logger import log
 
 config = Config.load()
 
@@ -30,15 +29,15 @@ def translate_mutil_texts(translations: List[Translation]) -> tuple[List[Transla
             translation.translated_text = translated_text
             success_job.append(translation)
             total_used_token += total_tokens
-            logger.debug(
+            log.debug(
                 f"Translated {translation.model_dump()} with {total_tokens} tokens."
             )
         else:
             if translate_config.enbale_backup:
                 failed_jobs.append(translation)
-            logger.error(f"Failed to translate {translation.model_dump()}")
+            log.error(f"Failed to translate {translation.model_dump()}")
 
-    logger.info(f"Translated {len(translations)} texts, failed {len(failed_jobs)}")
+    log.info(f"Translated {len(translations)} texts, failed {len(failed_jobs)}")
 
     if len(failed_jobs) > 0 and translate_config.enbale_backup:
         for translation in failed_jobs:
@@ -49,12 +48,12 @@ def translate_mutil_texts(translations: List[Translation]) -> tuple[List[Transla
                 translation.translated_text = translated_text
                 total_used_token += total_tokens
                 success_job.append(translation)
-                logger.debug(
+                log.debug(
                     f"Translated {translation.model_dump()} with downgrade model, used {total_tokens} tokens."
                 )
             else:
                 final_failed_jobs.append(translation)
-                logger.error(
+                log.error(
                     f"Failed to translate {translation.model_dump()} with downgrade model."
                 )
     else:
@@ -173,7 +172,7 @@ def check_modrinth_translations():
             failed_count += len(failed_results)
         else:
             break
-    logger.info(
+    log.info(
         f"Totally Translated {success_count} modrinth projects, failed {failed_count}, used {total_used_token} tokens."
     )
 
@@ -193,7 +192,7 @@ def check_curseforge_translations():
             failed_count += len(failed_results)
         else:
             break
-    logger.info(
+    log.info(
         f"Totally Translated {success_count} curseforge mods, failed {failed_count}, used {total_used_token} tokens."
     )
 
@@ -216,12 +215,12 @@ if __name__ == "__main__":
 
     # 启动调度器
     scheduler.start()
-    logger.info("Scheduler started, waiting for 10s.")
+    log.info("Scheduler started, waiting for 10s.")
 
     # 保持主线程运行
     try:
         while True:
             time.sleep(1)
     except (KeyboardInterrupt, SystemExit):
-        logger.info("Shutting down...")
+        log.info("Shutting down...")
         scheduler.shutdown()

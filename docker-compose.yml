@@ -9,7 +9,7 @@ services:
     depends_on:
       - mongodb
     volumes:
-      - /opt/mcim/translate-mod-summary/config:/config
+      - ./config.json:/config.json
     deploy:
       resources:
          limits:

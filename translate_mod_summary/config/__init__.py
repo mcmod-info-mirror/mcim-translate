@@ -2,9 +2,6 @@ import json
 import os
 from typing import Optional
 from pydantic import BaseModel
-from loguru import logger
-
-# 合并后的配置文件路径
 
 CONFIG_PATH = "config.json"
 
@@ -32,6 +29,7 @@ class Translate(BaseModel):
 
 # 合并配置模型，将三个配置嵌套在一起
 class ConfigModel(BaseModel):
+    debug: bool = False
     mongodb: MongodbConfigModel = MongodbConfigModel()
     translate: Translate = Translate()
     interval: int = 3600 * 24
@@ -41,7 +39,6 @@ class Config:
     def save(model: ConfigModel = ConfigModel(), target=CONFIG_PATH):
         with open(target, "w", encoding="UTF-8") as fd:
             json.dump(model.model_dump(), fd, indent=4)
-        logger.debug(f"Config saved at {CONFIG_PATH}")
 
     @staticmethod
     def load(target=CONFIG_PATH) -> ConfigModel:

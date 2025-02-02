@@ -1,7 +1,7 @@
 from openai import OpenAI
 from pydantic import BaseModel
 from typing import List, Union, Optional
-from loguru import logger
+from translate_mod_summary.logger import log
 
 from translate_mod_summary.config import Config
 from translate_mod_summary.constants import Platform, Mode
@@ -52,5 +52,5 @@ def translate_text(text, target_language: str = translate_config.target_language
             usage = response.usage
             return translated_text, usage.total_tokens
     except Exception as e:
-        logger.error(e)
+        log.error(e)
         return None, 0

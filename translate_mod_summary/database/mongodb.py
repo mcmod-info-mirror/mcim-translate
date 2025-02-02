@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 from translate_mod_summary.config import Config
-from loguru import logger
+from translate_mod_summary.logger import log
 
 _mongodb_config = Config.load().mongodb
 
@@ -25,4 +25,4 @@ def init_engine() -> MongoClient:
 engine: MongoClient = init_engine()
 database = engine[_mongodb_config.database]
 
-logger.info("MongoDB connection established.")
+log.info("MongoDB connection established.")
