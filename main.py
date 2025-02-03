@@ -127,7 +127,7 @@ def query_curseforge_database() -> List[Translation]:
     # 未翻译记录的查询
     pipeline_untranslated = [
         {"$match": {"classId": 6}},
-        {"$project": {"_id": 1, "description": 1}},
+        {"$project": {"_id": 1, "summary": 1}},
         {
             "$lookup": {
                 "from": "curseforge_translated",
@@ -146,18 +146,18 @@ def query_curseforge_database() -> List[Translation]:
         # 当未找到未翻译的记录时，查询原文本已改变的记录
         pipeline_changed = [
             {"$match": {"classId": 6}},
-            {"$project": {"_id": 1, "description": 1}},
+            {"$project": {"_id": 1, "summary": 1}},
             {
                 "$lookup": {
                     "from": "curseforge_translated",
-                    "let": {"mod_id": "$_id", "description": "$description"},
+                    "let": {"mod_id": "$_id", "summary": "$summary"},
                     "pipeline": [
                         {
                             "$match": {
                                 "$expr": {
                                     "$and": [
                                         {"$eq": ["$_id", "$$mod_id"]},
-                                        {"$ne": ["$original", "$$description"]},
+                                        {"$ne": ["$original", "$$summary"]},
                                     ]
                                 }
                             }
@@ -176,7 +176,7 @@ def query_curseforge_database() -> List[Translation]:
         Translation(
             platform=Platform.CURSEFORGE,
             id=mod["_id"],
-            original_text=mod["description"],
+            original_text=mod["summary"],
         )
         for mod in result
     ]
@@ -255,12 +255,12 @@ if __name__ == "__main__":
         name="modrinth_translate_job",
     )
 
-    # curseforge_translate_job = scheduler.add_job(
-    #     check_curseforge_translations,
-    #     trigger=IntervalTrigger(seconds=config.interval),
-    #     next_run_time=datetime.datetime.now(),
-    #     name="curseforge_translate_job",
-    # )
+    curseforge_translate_job = scheduler.add_job(
+        check_curseforge_translations,
+        trigger=IntervalTrigger(seconds=config.interval),
+        next_run_time=datetime.datetime.now(),
+        name="curseforge_translate_job",
+    )
 
     # 启动调度器
     scheduler.start()
