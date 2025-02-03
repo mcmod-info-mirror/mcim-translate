@@ -83,7 +83,7 @@ def query_modrinth_database() -> List[Translation]:
 
     collection = database.get_collection("modrinth_projects")
     result = list(collection.aggregate(pipeline_untranslated))
-    result = []
+
     if not result:
         # 当未找到未翻译的记录时，查询原文本已改变的记录
         pipeline_changed = [
