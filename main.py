@@ -65,6 +65,7 @@ def translate_mutil_texts(
 
 
 def query_modrinth_database() -> List[Translation]:
+    start_time = time.time()
     # 未翻译记录的查询
     pipeline_untranslated = [
         {"$project": {"_id": 1, "description": 1}},
@@ -112,6 +113,8 @@ def query_modrinth_database() -> List[Translation]:
             {"$limit": CHUNK_SIZE},
         ]
         result = list(collection.aggregate(pipeline_changed))
+    
+    log.debug(f"Found {len(result)} records in {time.time() - start_time} seconds.")
 
     return [
         Translation(
@@ -124,6 +127,7 @@ def query_modrinth_database() -> List[Translation]:
 
 
 def query_curseforge_database() -> List[Translation]:
+    start_time = time.time()
     # 未翻译记录的查询
     pipeline_untranslated = [
         {"$match": {"classId": 6}},
@@ -172,6 +176,8 @@ def query_curseforge_database() -> List[Translation]:
 
         result = list(collection.aggregate(pipeline_changed))
 
+    log.debug(f"Found {len(result)} records in {time.time() - start_time} seconds.")
+    
     return [
         Translation(
             platform=Platform.CURSEFORGE,
