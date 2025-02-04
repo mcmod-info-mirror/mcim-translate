@@ -1,8 +1,8 @@
 from openai import OpenAI
 from pydantic import BaseModel
 from typing import List, Union, Optional
-from translate_mod_summary.logger import log
 
+from translate_mod_summary.logger import log
 from translate_mod_summary.config import Config
 from translate_mod_summary.constants import Platform, Mode
 

@@ -24,6 +24,7 @@ def translate_mutil_texts(
     success_job: List[Translation] = []
     total_used_token = 0
     for translation in translations:
+        start_time = time.time()
         translated_text, total_tokens = translate_text(
             translation.original_text, mode=Mode.UPGRADE
         )
@@ -32,17 +33,18 @@ def translate_mutil_texts(
             success_job.append(translation)
             total_used_token += total_tokens
             log.debug(
-                f"Translated {translation.model_dump()} with {total_tokens} tokens."
+                f"Translated {translation.model_dump()} with {total_tokens} tokens in {time.time() - start_time} seconds."
             )
         else:
             if translate_config.enbale_backup:
                 failed_jobs.append(translation)
-            log.error(f"Failed to translate {translation.model_dump()}")
+            log.error(f"Failed to translate {translation.model_dump()} in {time.time() - start_time} seconds.")
 
     log.info(f"Translated {len(translations)} texts, failed {len(failed_jobs)}")
 
     if len(failed_jobs) > 0 and translate_config.enbale_backup:
         for translation in failed_jobs:
+            start_time = time.time()
             translated_text, total_tokens = translate_text(
                 translation.original_text, mode=Mode.DOWNGRADE
             )
@@ -51,12 +53,12 @@ def translate_mutil_texts(
                 total_used_token += total_tokens
                 success_job.append(translation)
                 log.debug(
-                    f"Translated {translation.model_dump()} with downgrade model, used {total_tokens} tokens."
+                    f"Translated {translation.model_dump()} with downgrade model, used {total_tokens} tokens in {time.time() - start_time} seconds."
                 )
             else:
                 final_failed_jobs.append(translation)
                 log.error(
-                    f"Failed to translate {translation.model_dump()} with downgrade model."
+                    f"Failed to translate {translation.model_dump()} with downgrade model in {time.time() - start_time} seconds."
                 )
     else:
         final_failed_jobs = failed_jobs
@@ -177,7 +179,7 @@ def query_curseforge_database() -> List[Translation]:
         result = list(collection.aggregate(pipeline_changed))
 
     log.debug(f"Found {len(result)} records in {time.time() - start_time} seconds.")
-    
+
     return [
         Translation(
             platform=Platform.CURSEFORGE,
