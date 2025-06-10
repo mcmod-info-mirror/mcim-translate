@@ -1,6 +1,8 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from typing import List, Optional
+from threading import Thread
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import datetime
 import time
 
@@ -15,55 +17,72 @@ translate_config = config.translate
 
 CHUNK_SIZE = translate_config.chunk_size
 
-
 def translate_mutil_texts(
     translations: List[Translation],
-) -> tuple[List[Translation], int]:
+) -> tuple[List[Translation], List[Translation], int]:
     failed_jobs: List[Translation] = []
     final_failed_jobs: List[Translation] = []
-    success_job: List[Translation] = []
+    success_jobs: List[Translation] = []
     total_used_token = 0
-    for translation in translations:
+
+    def process_translation(translation: Translation, mode: Mode) -> tuple[Optional[Translation], int]:
         start_time = time.time()
-        translated_text, total_tokens = translate_text(
-            translation.original_text, mode=Mode.UPGRADE
-        )
+        translated_text, total_tokens = translate_text(translation.original_text, mode=mode)
         if translated_text:
+            translated_text = translated_text.strip()
             translation.translated_text = translated_text
-            success_job.append(translation)
-            total_used_token += total_tokens
             log.debug(
                 f"Translated {translation.model_dump()} with {total_tokens} tokens in {time.time() - start_time} seconds."
             )
+            return translation, total_tokens
         else:
-            if translate_config.enbale_backup:
-                failed_jobs.append(translation)
             log.error(f"Failed to translate {translation.model_dump()} in {time.time() - start_time} seconds.")
+            return None, 0
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {executor.submit(process_translation, translation, Mode.UPGRADE): translation for translation in translations}
+        for future in as_completed(futures):
+            translation = futures[future]
+            try:
+                result, tokens = future.result()
+                if result:
+                    success_jobs.append(result)
+                    total_used_token += tokens
+                else:
+                    if translate_config.enbale_backup:
+                        failed_jobs.append(translation)
+            except Exception as e:
+                log.error(f"Error processing translation {translation.model_dump()}: {e}")
+                if translate_config.enbale_backup:
+                    failed_jobs.append(translation)
 
     log.info(f"Translated {len(translations)} texts, failed {len(failed_jobs)}")
 
-    if len(failed_jobs) > 0 and translate_config.enbale_backup:
-        for translation in failed_jobs:
-            start_time = time.time()
-            translated_text, total_tokens = translate_text(
-                translation.original_text, mode=Mode.DOWNGRADE
-            )
-            if translated_text:
-                translation.translated_text = translated_text
-                total_used_token += total_tokens
-                success_job.append(translation)
-                log.debug(
-                    f"Translated {translation.model_dump()} with downgrade model, used {total_tokens} tokens in {time.time() - start_time} seconds."
-                )
-            else:
-                final_failed_jobs.append(translation)
-                log.error(
-                    f"Failed to translate {translation.model_dump()} with downgrade model in {time.time() - start_time} seconds."
-                )
-    else:
-        final_failed_jobs = failed_jobs
+    # if len(failed_jobs) > 0 and translate_config.enbale_backup:
+    #     with ThreadPoolExecutor(max_workers=translate_config.max_threads) as executor:
+    #         futures = {executor.submit(process_translation, translation, Mode.DOWNGRADE): translation for translation in failed_jobs}
+    #         for future in as_completed(futures):
+    #             translation = futures[future]
+    #             try:
+    #                 result, tokens = future.result()
+    #                 if result:
+    #                     success_jobs.append(result)
+    #                     total_used_token += tokens
+    #                     log.debug(
+    #                         f"Translated {translation.model_dump()} with downgrade model, used {tokens} tokens."
+    #                     )
+    #                 else:
+    #                     final_failed_jobs.append(translation)
+    #                     log.error(
+    #                         f"Failed to translate {translation.model_dump()} with downgrade model."
+    #                     )
+    #             except Exception as e:
+    #                 log.error(f"Error processing translation {translation.model_dump()} with downgrade model: {e}")
+    #                 final_failed_jobs.append(translation)
+    # else:
+    #     final_failed_jobs = failed_jobs
 
-    return success_job, final_failed_jobs, total_used_token
+    return success_jobs, final_failed_jobs, total_used_token
 
 
 def query_modrinth_database() -> List[Translation]:
@@ -263,12 +282,12 @@ if __name__ == "__main__":
         name="modrinth_translate_job",
     )
 
-    curseforge_translate_job = scheduler.add_job(
-        check_curseforge_translations,
-        trigger=IntervalTrigger(seconds=config.interval),
-        next_run_time=datetime.datetime.now(),
-        name="curseforge_translate_job",
-    )
+    # curseforge_translate_job = scheduler.add_job(
+    #     check_curseforge_translations,
+    #     trigger=IntervalTrigger(seconds=config.interval),
+    #     next_run_time=datetime.datetime.now(),
+    #     name="curseforge_translate_job",
+    # )
 
     # 启动调度器
     scheduler.start()
