@@ -1,7 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from typing import List, Optional
-from threading import Thread
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import datetime
 import time
@@ -32,7 +31,7 @@ def translate_mutil_texts(
             translated_text = translated_text.strip()
             translation.translated_text = translated_text
             log.debug(
-                f"Translated {translation.model_dump()} with {total_tokens} tokens in {time.time() - start_time} seconds."
+                f"Translated {translation.model_dump()} with {total_tokens} tokens in {round(time.time() - start_time, 2)} seconds."
             )
             return translation, total_tokens
         else:
