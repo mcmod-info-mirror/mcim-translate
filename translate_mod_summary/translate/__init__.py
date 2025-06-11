@@ -32,7 +32,7 @@ def translate_text(text, target_language: str = translate_config.target_language
             {
                 "role": "system",
                 # "content": f"你是专业的 Minecraft 中文翻译助手，接地气地直接地将文本翻译为{target_language}给我，文本背景是 Minecraft Mod 介绍，特有名词不要翻译",
-                "content": f"Translate the text of the introduction of Minecraft Mod directly into {target_language}. Do not translate the specific nouns. NO explanations. NO notes.",
+                "content": f"Translate the introduction text of a Minecraft Mod into {target_language}. Do not translate mod-specific terms. Translate vanilla Minecraft item names according to the {target_language} Minecraft Wiki. No explanations, no additional notes, only the translated text.",
             },
             {"role": "user", "content": text},
         ]
