@@ -28,7 +28,6 @@ def translate_mutil_texts(
         start_time = time.time()
         translated_text, total_tokens = translate_text(translation.original_text, mode=mode)
         if translated_text:
-            translated_text = translated_text.strip()
             translation.translated_text = translated_text
             log.debug(
                 f"Translated {translation.model_dump()} with {total_tokens} tokens in {round(time.time() - start_time, 2)} seconds."
@@ -274,19 +273,19 @@ if __name__ == "__main__":
     init_engine()
     scheduler = BackgroundScheduler()
 
-    modrinth_translate_job = scheduler.add_job(
-        check_modrinth_translations,
-        trigger=IntervalTrigger(seconds=config.interval),
-        next_run_time=datetime.datetime.now(),
-        name="modrinth_translate_job",
-    )
-
-    # curseforge_translate_job = scheduler.add_job(
-    #     check_curseforge_translations,
+    # modrinth_translate_job = scheduler.add_job(
+    #     check_modrinth_translations,
     #     trigger=IntervalTrigger(seconds=config.interval),
     #     next_run_time=datetime.datetime.now(),
-    #     name="curseforge_translate_job",
+    #     name="modrinth_translate_job",
     # )
+
+    curseforge_translate_job = scheduler.add_job(
+        check_curseforge_translations,
+        trigger=IntervalTrigger(seconds=config.interval),
+        next_run_time=datetime.datetime.now(),
+        name="curseforge_translate_job",
+    )
 
     # 启动调度器
     scheduler.start()
