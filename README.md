@@ -50,6 +50,8 @@ URL 参数：`modId`
 }
 ```
 
+已添加批量获取翻译接口，详情见 <https://mod.mcimirror.top/docs>
+
 翻译数据见 <https://github.com/mcmod-info-mirror/data>
 
 更新日志
