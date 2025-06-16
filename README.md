@@ -2,15 +2,11 @@
 
 定时翻译 MCIM 数据库内的 Mod 简介
 
-本项目接入 Deepseek-V3 模型自动将 Mod 的简介翻译为中文
+本项目通过 LLM 自动将 Mod 的简介翻译为中文
 
 提案可见 <https://github.com/MCLF-CN/docs/issues/15>
 
-对于 Curseforge 暂时只提供 `classId` 为 `6` 的 Mod 的翻译，会继续跟进
-
-已翻译当前所有 Modrinth Project
-
-刷新频率是每天，如果有 Mod 未覆盖请稍后再试
+已翻译当前所有 Modrinth Project 和 Curseforge Minecraft 相关
 
 如果 API 有问题请在 [mcim-api issues](https://github.com/mcmod-info-mirror/mcim-api/issues) 提出，翻译质量和遗漏问题在此处 [issues](https://github.com/mcmod-info-mirror/translate-mod-summary/issues) 提出
 
@@ -55,3 +51,8 @@ URL 参数：`modId`
 ```
 
 翻译数据见 <https://github.com/mcmod-info-mirror/data>
+
+更新日志
+
+- [20250616 更新补全翻译](https://github.com/mcmod-info-mirror/data/releases/tag/20250616)
+- [20250204 更新补全翻译](https://github.com/mcmod-info-mirror/data/releases/tag/20250124)
