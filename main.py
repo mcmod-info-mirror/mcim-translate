@@ -273,12 +273,12 @@ if __name__ == "__main__":
     init_engine()
     scheduler = BackgroundScheduler()
 
-    # modrinth_translate_job = scheduler.add_job(
-    #     check_modrinth_translations,
-    #     trigger=IntervalTrigger(seconds=config.interval),
-    #     next_run_time=datetime.datetime.now(),
-    #     name="modrinth_translate_job",
-    # )
+    modrinth_translate_job = scheduler.add_job(
+        check_modrinth_translations,
+        trigger=IntervalTrigger(seconds=config.interval),
+        next_run_time=datetime.datetime.now(),
+        name="modrinth_translate_job",
+    )
 
     curseforge_translate_job = scheduler.add_job(
         check_curseforge_translations,
