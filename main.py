@@ -66,6 +66,8 @@ def check_translations(query_func: Callable[[int], List[Translation]]) -> tuple:
             for result in success_results:
                 update_translation(result)
 
+            log.info(f"Successfully translated {len(success_results)} items.")
+
             success_count += len(success_results)
             failed_count += len(failed_results)
         else:
