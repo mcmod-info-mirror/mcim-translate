@@ -37,7 +37,7 @@ def query_modrinth_database(
         translated_query_results = list(
             translated_modrinth_collection.find(
                 {"_id": {"$in": [mod["_id"] for mod in origin_query_results]}},
-                {"_id": 1, "original": 1},
+                {"_id": 1, "original": 1, "translated": 1},
             )
             .sort({"_id": 1})
         )
