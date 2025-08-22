@@ -5,8 +5,6 @@ from pydantic import BaseModel
 
 CONFIG_PATH = "config.json"
 
-# 单独配置模型定义
-
 class MongodbConfigModel(BaseModel):
     host: str = "mongodb"
     port: int = 27017
@@ -26,6 +24,9 @@ class Translate(BaseModel):
     temperature: float = 0.6
     target_language: str = "中文"
     chunk_size: int = 2
+    multiprocess: bool = False
+    enable_thinking: bool = False
+    thinking_budget: int = 256
 
 # 合并配置模型，将三个配置嵌套在一起
 class ConfigModel(BaseModel):
