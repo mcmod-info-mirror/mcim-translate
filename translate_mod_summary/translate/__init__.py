@@ -15,7 +15,7 @@ import re
 translate_config = Config.load().translate
 
 CLIENT = OpenAI(api_key=translate_config.api_key, base_url=translate_config.base_url)
-if translate_config.enbale_backup:
+if translate_config.enable_backup:
     BACKUP_CLIENT = OpenAI(
         api_key=translate_config.backup_api_key,
         base_url=translate_config.backup_base_url,
@@ -155,13 +155,13 @@ def process_multi_translations(
                     success_jobs.append(result)
                     total_used_token += tokens
                 else:
-                    if translate_config.enbale_backup:
+                    if translate_config.enable_backup:
                         failed_jobs.append(translation)
             except Exception as e:
                 log.error(
                     f"Error processing translation {translation.model_dump()}: {e}"
                 )
-                if translate_config.enbale_backup:
+                if translate_config.enable_backup:
                     failed_jobs.append(translation)
 
     log.info(f"Translated {len(translations)} texts, failed {len(failed_jobs)}")

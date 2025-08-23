@@ -17,7 +17,7 @@ class Translate(BaseModel):
     api_key: str = "<api key>"
     base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     model: str = "deepseek-v3"
-    enbale_backup: bool = False
+    enable_backup: bool = False
     backup_model: Optional[str] = None
     backup_api_key: Optional[str] = None
     backup_base_url: Optional[str] = None
