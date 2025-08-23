@@ -5,10 +5,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 import time
 
-from translate_mod_summary.logger import log
-from translate_mod_summary.config import Config
-from translate_mod_summary.constants import Platform, Mode
-from translate_mod_summary.database.mongodb import database
+from mcim_translate.logger import log
+from mcim_translate.config import Config
+from mcim_translate.constants import Platform, Mode
+from mcim_translate.database.mongodb import database
 import re
 
 

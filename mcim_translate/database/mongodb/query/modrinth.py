@@ -1,11 +1,11 @@
 from typing import List, Tuple
 import time
 
-from translate_mod_summary.translate import Translation
-from translate_mod_summary.constants import Platform
-from translate_mod_summary.database.mongodb import database
-from translate_mod_summary.config import Config
-from translate_mod_summary.logger import log
+from mcim_translate.translate import Translation
+from mcim_translate.constants import Platform
+from mcim_translate.database.mongodb import database
+from mcim_translate.config import Config
+from mcim_translate.logger import log
 
 config = Config.load()
 

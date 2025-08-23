@@ -1,4 +1,4 @@
-from translate_mod_summary.database.mongodb import (
+from mcim_translate.database.mongodb import (
     init_engine,
     database
 )

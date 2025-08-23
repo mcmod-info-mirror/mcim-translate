@@ -1,7 +1,7 @@
 from loguru import logger
 import sys
 
-from translate_mod_summary.config import Config
+from mcim_translate.config import Config
 
 config = Config.load()
 

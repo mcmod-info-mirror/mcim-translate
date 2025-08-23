@@ -4,20 +4,20 @@ from typing import Callable, List
 import datetime
 import time
 
-from translate_mod_summary.translate import (
+from mcim_translate.translate import (
     update_translation,
     process_translation,
     process_multi_translations,
     Translation,
 )
-from translate_mod_summary.database.mongodb import init_engine
-from translate_mod_summary.database.mongodb.query import (
+from mcim_translate.database.mongodb import init_engine
+from mcim_translate.database.mongodb.query import (
     query_curseforge_database,
     query_modrinth_database,
 )
-from translate_mod_summary.config import Config
-from translate_mod_summary.logger import log
-from translate_mod_summary.constants import Mode
+from mcim_translate.config import Config
+from mcim_translate.logger import log
+from mcim_translate.constants import Mode
 
 
 config = Config.load()

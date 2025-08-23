@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
-from translate_mod_summary.config import Config
-from translate_mod_summary.logger import log
+from mcim_translate.config import Config
+from mcim_translate.logger import log
 
 _mongodb_config = Config.load().mongodb
 
