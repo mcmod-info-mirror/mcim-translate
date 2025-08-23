@@ -77,6 +77,7 @@ def check_translations(query_func: Callable[[int], List[Translation]]) -> tuple:
 
 
 def check_modrinth_translations():
+    log.info("Starting Modrinth translation check...")
     success_count, failed_count, total_used_token = check_translations(
         query_modrinth_database
     )
@@ -86,6 +87,7 @@ def check_modrinth_translations():
 
 
 def check_curseforge_translations():
+    log.info("Starting CurseForge translation check...")
     success_count, failed_count, total_used_token = check_translations(
         query_curseforge_database
     )
