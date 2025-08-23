@@ -70,46 +70,46 @@ def translate_text(
     target_language: str = translate_config.target_language,
     mode: Mode = Mode.UPGRADE,
 ) -> tuple[Optional[str], int]:
-    # try:
-    message = [
-        {
-            "role": "system",
-            # "content": f"你是专业的 Minecraft 中文翻译助手，接地气地直接地将文本翻译为{target_language}给我，文本背景是 Minecraft Mod 介绍，特有名词不要翻译",
-            "content": f"Translate the introduction text of a Minecraft Mod into {target_language}. Do not translate mod-specific terms. Translate vanilla Minecraft item names according to the {target_language} Minecraft Wiki. No explanations, no additional notes, only the translated text.",
-        },
-        {"role": "user", "content": text},
-    ]
-    if mode == Mode.DOWNGRADE:
-        if not BACKUP_CLIENT:
-            log.warning("Backup client is not available.")
-            return None, 0
-        response = BACKUP_CLIENT.chat.completions.create(
-            model=translate_config.backup_model,
-            messages=message,
-            temperature=translate_config.temperature,
-        )
-    else:
-        response = CLIENT.chat.completions.create(
-            model=translate_config.model,
-            messages=message,
-            temperature=translate_config.temperature,
-            extra_body={
-                "enable_thinking": translate_config.enable_thinking,
-                "thinking_budget": translate_config.thinking_budget,
+    try:
+        message = [
+            {
+                "role": "system",
+                # "content": f"你是专业的 Minecraft 中文翻译助手，接地气地直接地将文本翻译为{target_language}给我，文本背景是 Minecraft Mod 介绍，特有名词不要翻译",
+                "content": f"Translate the introduction text of a Minecraft Mod into {target_language}. Do not translate mod-specific terms. Translate vanilla Minecraft item names according to the {target_language} Minecraft Wiki. No explanations, no additional notes, only the translated text.",
             },
-        )
-    if response:
-        translated_text = response.choices[0].message.content
-        usage = response.usage
-        translated_text = post_processing_text(translated_text)
-        return translated_text, usage.total_tokens
-    else:
-        raise Exception("Failed to get response from API")
-
-
-# except Exception as e:
-#     log.error(e)
-#     return None, 0
+            {"role": "user", "content": text},
+        ]
+        if mode == Mode.DOWNGRADE:
+            if not BACKUP_CLIENT:
+                log.warning("Backup client is not available.")
+                return None, 0
+            response = BACKUP_CLIENT.chat.completions.create(
+                model=translate_config.backup_model,
+                messages=message,
+                temperature=translate_config.temperature,
+                timeout=60
+            )
+        else:
+            response = CLIENT.chat.completions.create(
+                model=translate_config.model,
+                messages=message,
+                temperature=translate_config.temperature,
+                extra_body={
+                    "enable_thinking": translate_config.enable_thinking,
+                    "thinking_budget": translate_config.thinking_budget,
+                },
+                timeout=60
+            )
+        if response:
+            translated_text = response.choices[0].message.content
+            usage = response.usage
+            translated_text = post_processing_text(translated_text)
+            return translated_text, usage.total_tokens
+        else:
+            raise Exception("Failed to get response from API")
+    except Exception as e:
+        log.error(e)
+        return None, 0
 
 
 def process_translation(
