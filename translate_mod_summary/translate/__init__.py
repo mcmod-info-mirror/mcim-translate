@@ -116,6 +116,7 @@ def process_translation(
     translation: Translation, mode: Mode
 ) -> tuple[Optional[Translation], int]:
     start_time = time.time()
+    log.debug(f"Translating {translation.model_dump()}...")
     translated_text, total_tokens = translate_text(translation.original_text, mode=mode)
     if translated_text:
         translation.translated_text = translated_text
@@ -137,6 +138,8 @@ def process_multi_translations(
     final_failed_jobs: List[Translation] = []
     success_jobs: List[Translation] = []
     total_used_token = 0
+
+    log.info(f"Translating {len(translations)} texts with multithreading...")
 
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = {
