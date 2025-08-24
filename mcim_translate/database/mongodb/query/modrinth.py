@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 import time
 
 from mcim_translate.translate import Translation
@@ -11,52 +11,27 @@ config = Config.load()
 
 translate_config = config.translate
 
-def query_modrinth_database(
-    start_at: int, batch_size: int
-) -> Tuple[int, List[Translation]]:
-    start_time = time.time()
 
+def query_modrinth_database(batch_size: int) -> List[Translation]:
+    start_time = time.time()
     results: List[Translation] = []
 
-    while len(results) < batch_size:
-        modrinth_collection = database.get_collection("modrinth_projects")
-        translated_modrinth_collection = database.get_collection("modrinth_translated")
-        origin_query_results = list(
-            modrinth_collection.find(
-                {"description": {"$exists": True, "$ne": ""}},
-                {"_id": 1, "description": 1},
+    translated_modrinth_collection = database.get_collection("modrinth_translated")
+
+    for translated_mod in translated_modrinth_collection.find(
+        {"need_to_update": True}, {"_id": 1, "original": 1}
+    ).limit(batch_size):
+        results.append(
+            Translation(
+                platform=Platform.MODRINTH,
+                id=translated_mod["_id"],
+                original_text=translated_mod["original"],
+                translated_text=None,
             )
-            .sort({"_id": 1})
-            .skip(start_at)
-            .limit(batch_size)
         )
 
-        if len(origin_query_results) == 0:
-            break
+    log.debug(
+        f"Found {len(results)} records in {round(time.time() - start_time, 2)} seconds."
+    )
 
-        translated_query_results = list(
-            translated_modrinth_collection.find(
-                {"_id": {"$in": [mod["_id"] for mod in origin_query_results]}},
-                {"_id": 1, "original": 1, "translated": 1},
-            )
-            .sort({"_id": 1})
-        )
-
-        for mod in origin_query_results:
-            translated_mod = next(
-                (t for t in translated_query_results if t["_id"] == mod["_id"]), None
-            )
-            if not translated_mod or translated_mod["original"] != mod["description"]:
-                results.append(
-                    Translation(
-                        platform=Platform.MODRINTH,
-                        id=mod["_id"],
-                        original_text=mod["description"],
-                        translated_text=translated_mod["translated"] if translated_mod else None
-                    )
-                )
-        start_at += batch_size
-
-    log.debug(f"Found {len(results)} records in {round(time.time() - start_time, 2)} seconds.")
-
-    return start_at, results
+    return results

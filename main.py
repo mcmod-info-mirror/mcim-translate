@@ -29,13 +29,12 @@ def check_translations(query_func: Callable[[int], List[Translation]]) -> tuple:
     success_count = 0
     failed_count = 0
     total_used_token = 0
-    start_at = 0
 
     while True:
         success_results = []
         failed_results = []
-        start_at, translate_jobs = query_func(
-            batch_size=config.translate.chunk_size, start_at=start_at
+        translate_jobs = query_func(
+            batch_size=config.translate.chunk_size
         )
         if len(translate_jobs) > 0:
             if config.translate.multiprocess:
