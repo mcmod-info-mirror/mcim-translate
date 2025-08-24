@@ -41,6 +41,8 @@ class ConfigModel(BaseModel):
     translate: Translate = Translate()
     telegram: Telegram = Telegram()
     interval: int = 3600 * 24
+    curseforge_cron: str = "0 0 * * *"
+    modrinth_cron: str = "0 0 * * *"
 
 class Config:
     @staticmethod

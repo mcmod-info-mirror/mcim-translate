@@ -1,5 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.triggers.cron import CronTrigger
 from typing import Callable, List
 import datetime
 import time
@@ -108,14 +109,16 @@ if __name__ == "__main__":
 
     modrinth_translate_job = scheduler.add_job(
         check_modrinth_translations,
-        trigger=IntervalTrigger(seconds=config.interval),
+        # trigger=IntervalTrigger(seconds=config.interval),
+        trigger=CronTrigger.from_crontab(config.modrinth_cron),
         next_run_time=datetime.datetime.now(),
         name="modrinth_translate_job",
     )
 
     curseforge_translate_job = scheduler.add_job(
         check_curseforge_translations,
-        trigger=IntervalTrigger(seconds=config.interval),
+        # trigger=IntervalTrigger(seconds=config.interval),
+        trigger=CronTrigger.from_crontab(config.curseforge_cron),
         next_run_time=datetime.datetime.now(),
         name="curseforge_translate_job",
     )
