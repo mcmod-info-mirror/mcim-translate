@@ -1,4 +1,4 @@
-# translate-mod-summary
+# mcim-translate
 
 定时翻译 MCIM 数据库内的 Mod 简介
 
@@ -8,7 +8,7 @@
 
 已翻译当前所有 Modrinth Project 和 Curseforge Minecraft 相关
 
-如果 API 有问题请在 [mcim-rust-api issues](https://github.com/mcmod-info-mirror/mcim-rust-api/issues) 提出，翻译质量和遗漏问题在此处 [issues](https://github.com/mcmod-info-mirror/translate-mod-summary/issues) 提出
+如果 API 有问题请在 [mcim-rust-api issues](https://github.com/mcmod-info-mirror/mcim-rust-api/issues) 提出，翻译质量和遗漏问题在此处 [issues](https://github.com/mcmod-info-mirror/mcim-translate/issues) 提出
 
 简介原文来自 Modrinth Project 的 `description` 和 Curseforge Mod 的 `summary` 字段
 

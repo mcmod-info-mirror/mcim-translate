@@ -28,11 +28,18 @@ class Translate(BaseModel):
     enable_thinking: bool = False
     thinking_budget: int = 256
 
+class Telegram(BaseModel):
+    enable: bool = False
+    bot_api: str = "https://api.telegram.org/bot"
+    bot_token: str = "<bot token>"
+    chat_id: str = "<chat id>"
+
 # 合并配置模型，将三个配置嵌套在一起
 class ConfigModel(BaseModel):
     debug: bool = False
     mongodb: MongodbConfigModel = MongodbConfigModel()
     translate: Translate = Translate()
+    telegram: Telegram = Telegram()
     interval: int = 3600 * 24
 
 class Config:

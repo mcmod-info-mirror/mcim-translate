@@ -17,7 +17,8 @@ from mcim_translate.database.mongodb.query import (
 )
 from mcim_translate.config import Config
 from mcim_translate.logger import log
-from mcim_translate.constants import Mode
+from mcim_translate.constants import Mode, Platform
+from mcim_translate.telegram import send_result
 
 
 config = Config.load()
@@ -29,6 +30,8 @@ def check_translations(query_func: Callable[[int], List[Translation]]) -> tuple:
     success_count = 0
     failed_count = 0
     total_used_token = 0
+
+    translated_ids = []
 
     while True:
         success_results = []
@@ -64,6 +67,7 @@ def check_translations(query_func: Callable[[int], List[Translation]]) -> tuple:
 
             for result in success_results:
                 update_translation(result)
+                translated_ids.append(result.id)
 
             log.info(f"Successfully translated {len(success_results)} items.")
 
@@ -72,28 +76,31 @@ def check_translations(query_func: Callable[[int], List[Translation]]) -> tuple:
         else:
             break
 
-    return success_count, failed_count, total_used_token
+    return success_count, failed_count, total_used_token, translated_ids
 
 
 def check_modrinth_translations():
     log.info("Starting Modrinth translation check...")
-    success_count, failed_count, total_used_token = check_translations(
+    success_count, failed_count, total_used_token, translated_ids = check_translations(
         query_modrinth_database
     )
     log.info(
         f"Totally Translated {success_count} modrinth projects, failed {failed_count}, used {total_used_token} tokens."
     )
+    send_result(Platform.MODRINTH, translated_ids)
+    log.info("Modrinth translation check completed.")
 
 
 def check_curseforge_translations():
     log.info("Starting CurseForge translation check...")
-    success_count, failed_count, total_used_token = check_translations(
+    success_count, failed_count, total_used_token, translated_ids = check_translations(
         query_curseforge_database
     )
     log.info(
         f"Totally Translated {success_count} curseforge projects, failed {failed_count}, used {total_used_token} tokens."
     )
-
+    send_result(Platform.CURSEFORGE, translated_ids)
+    log.info("CurseForge translation check completed.")
 
 if __name__ == "__main__":
     init_engine()

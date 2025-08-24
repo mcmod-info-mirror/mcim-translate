@@ -1,5 +1,5 @@
 # 第一阶段：构建阶段
-FROM python:3.11-slim-buster AS builder
+FROM python:3.12-slim-buster AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -14,7 +14,7 @@ COPY ./mcim_translate ./mcim_translate
 COPY main.py .
 
 # 第二阶段：运行阶段
-FROM python:3.11-slim-buster
+FROM python:3.12-slim-buster
 
 # 设置工作目录
 WORKDIR /app

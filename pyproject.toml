@@ -1,0 +1,17 @@
+[project]
+name = "mcim-translated"
+version = "0.1.0"
+description = "Provides translation for the MCIM."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "apscheduler==3.10.4",
+    "httpx>=0.28.1",
+    "loguru>=0.7.3",
+    "openai~=1.37.0",
+    "pydantic>=2.11.7",
+    "pydantic-core>=2.33.2",
+    "pymongo>=4.14.1",
+    "python-telegram-bot>=22.3",
+    "tenacity>=9.1.2",
+]
