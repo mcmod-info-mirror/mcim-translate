@@ -205,6 +205,7 @@ def update_translation(translation: Translation):
                 "translated": translation.translated_text,
                 "original": translation.original_text,
                 "translated_at": datetime.now(),
+                "need_to_update": False
             }
         },
         upsert=True,
