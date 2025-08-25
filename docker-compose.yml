@@ -4,7 +4,7 @@ services:
     image: mcim_translate
     build:
       context: .
-      dockerfile: ./mcim-translate/Dockerfile
+      dockerfile: ./Dockerfile
     restart: always
     depends_on:
       - mongodb
