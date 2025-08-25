@@ -88,8 +88,9 @@ def check_modrinth_translations():
     log.info(
         f"Totally Translated {success_count} modrinth projects, failed {failed_count}, used {total_used_token} tokens."
     )
-    send_result(Platform.MODRINTH, translated_ids)
-    log.info("Modrinth translation check completed.")
+    if len(translated_ids) > 0:
+        send_result(Platform.MODRINTH, translated_ids)
+        log.info("Modrinth translation check completed.")
 
 
 def check_curseforge_translations():
@@ -100,8 +101,9 @@ def check_curseforge_translations():
     log.info(
         f"Totally Translated {success_count} curseforge projects, failed {failed_count}, used {total_used_token} tokens."
     )
-    send_result(Platform.CURSEFORGE, translated_ids)
-    log.info("CurseForge translation check completed.")
+    if len(translated_ids) > 0:
+        send_result(Platform.CURSEFORGE, translated_ids)
+        log.info("CurseForge translation check completed.")
 
 if __name__ == "__main__":
     init_engine()
