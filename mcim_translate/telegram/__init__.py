@@ -79,5 +79,6 @@ def send_result(platform: Platform, project_ids: List[Union[int, str]]) -> int:
         raise ValueError(f"Unknown platform: {platform}")
     return send_message_sync(
         message,
-        telegram_config.chat_id
+        telegram_config.chat_id,
+        parse_mode="MarkdownV2"
     )
