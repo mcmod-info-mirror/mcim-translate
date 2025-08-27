@@ -35,3 +35,8 @@ def query_modrinth_database(batch_size: int) -> List[Translation]:
     )
 
     return results
+
+
+def get_estimate_modrinth_translation_count() -> int:
+    translated_modrinth_collection = database.get_collection("modrinth_translated")
+    return translated_modrinth_collection.count_documents({"need_to_update": True})

@@ -15,6 +15,9 @@ from mcim_translate.database.mongodb import init_engine
 from mcim_translate.database.mongodb.query import (
     query_curseforge_database,
     query_modrinth_database,
+    get_estimate_curseforge_translation_count,
+    get_estimate_modrinth_translation_count
+
 )
 from mcim_translate.config import Config
 from mcim_translate.logger import log
@@ -27,7 +30,7 @@ config = Config.load()
 translate_config = config.translate
 
 
-def check_translations(query_func: Callable[[int], List[Translation]]) -> tuple:
+def check_translations(query_func: Callable[[int], List[Translation]], estimate_count_func: Callable[[], int]) -> tuple:
     success_count = 0
     failed_count = 0
     total_used_token = 0
@@ -70,7 +73,8 @@ def check_translations(query_func: Callable[[int], List[Translation]]) -> tuple:
                 update_translation(result)
                 translated_ids.append(result.id)
 
-            log.info(f"Successfully translated {len(success_results)} items.")
+            estimate_count = estimate_count_func()
+            log.info(f"Successfully translated {len(success_results)} items, {estimate_count} items remaining.")
 
             success_count += len(success_results)
             failed_count += len(failed_results)
@@ -83,7 +87,7 @@ def check_translations(query_func: Callable[[int], List[Translation]]) -> tuple:
 def check_modrinth_translations():
     log.info("Starting Modrinth translation check...")
     success_count, failed_count, total_used_token, translated_ids = check_translations(
-        query_modrinth_database
+        query_modrinth_database, get_estimate_modrinth_translation_count
     )
     log.info(
         f"Totally Translated {success_count} modrinth projects, failed {failed_count}, used {total_used_token} tokens."
@@ -96,7 +100,7 @@ def check_modrinth_translations():
 def check_curseforge_translations():
     log.info("Starting CurseForge translation check...")
     success_count, failed_count, total_used_token, translated_ids = check_translations(
-        query_curseforge_database
+        query_curseforge_database, get_estimate_curseforge_translation_count
     )
     log.info(
         f"Totally Translated {success_count} curseforge projects, failed {failed_count}, used {total_used_token} tokens."

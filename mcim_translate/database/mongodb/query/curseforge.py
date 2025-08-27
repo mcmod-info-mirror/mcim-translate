@@ -32,7 +32,11 @@ def query_curseforge_database(batch_size: int) -> List[Translation]:
         )
 
     log.debug(
-        f"Found {len(results)} records in {round(time.time() - start_time, 2)} seconds."
+        f"Found {len(results)} Curseforge records in {round(time.time() - start_time, 2)} seconds."
     )
 
     return results
+
+def get_estimate_curseforge_translation_count() -> int:
+    translated_curseforge_collection = database.get_collection("curseforge_translated")
+    return translated_curseforge_collection.count_documents({"need_to_update": True})
