@@ -14,7 +14,7 @@
 
 ## 接入说明
 
-详情见[接口文档](https://mod.mcimirror.top/docs#/translate)
+参数和响应格式可能改变，请务必详情见[接口文档](https://mod.mcimirror.top/docs#/translate)
 
 ### Modrinth
 
@@ -43,7 +43,7 @@ URL 参数：`modId`
 
 ```json
 {
-  "modId": 238222,
+  "modid": 238222,
   "translated": "查看物品和配方",
   "original": "View Items and Recipes",
   "translated_at": "2025-02-02T10:01:52.805000"
