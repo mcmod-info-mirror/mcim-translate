@@ -94,10 +94,8 @@ def translate_text(
                 model=translate_config.model,
                 messages=message,
                 temperature=translate_config.temperature,
-                extra_body={
-                    "enable_thinking": translate_config.enable_thinking,
-                    "thinking_budget": translate_config.thinking_budget,
-                },
+                reasoning_effort=translate_config.reasoning_effort,
+                extra_body=translate_config.extra_body,
                 timeout=60
             )
         if response:
@@ -205,7 +203,8 @@ def update_translation(translation: Translation):
                 "translated": translation.translated_text,
                 "original": translation.original_text,
                 "translated_at": datetime.now(),
-                "need_to_update": False
+                "need_to_update": False,
+                # "translated_model": 
             }
         },
         upsert=True,

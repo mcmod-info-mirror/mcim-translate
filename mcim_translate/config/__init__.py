@@ -15,8 +15,8 @@ class MongodbConfigModel(BaseModel):
 
 class Translate(BaseModel):
     api_key: str = "<api key>"
-    base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    model: str = "deepseek-v3"
+    base_url: str = "https://api.deepseek.com"
+    model: str = "deepseek-v4-flash"
     enable_backup: bool = False
     backup_model: Optional[str] = None
     backup_api_key: Optional[str] = None
@@ -25,8 +25,10 @@ class Translate(BaseModel):
     target_language: str = "中文"
     chunk_size: int = 2
     multiprocess: bool = False
-    enable_thinking: bool = False
-    thinking_budget: int = 256
+    # enable_thinking: bool = False
+    # thinking_budget: int = 256
+    extra_body: Optional[dict] = None
+    reasoning_effort: Optional[str] = "low"  # "low", "medium", "high", "xhigh"
 
 class Telegram(BaseModel):
     enable: bool = False
