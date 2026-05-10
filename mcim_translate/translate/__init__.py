@@ -11,7 +11,6 @@ from mcim_translate.constants import Platform, Mode
 from mcim_translate.database.mongodb import database
 import re
 
-
 translate_config = Config.load().translate
 
 CLIENT = OpenAI(api_key=translate_config.api_key, base_url=translate_config.base_url)
@@ -87,16 +86,23 @@ def translate_text(
                 model=translate_config.backup_model,
                 messages=message,
                 temperature=translate_config.temperature,
-                timeout=60
+                timeout=60,
             )
         else:
             response = CLIENT.chat.completions.create(
                 model=translate_config.model,
                 messages=message,
                 temperature=translate_config.temperature,
-                reasoning_effort=translate_config.reasoning_effort,
+                reasoning_effort=(
+                    translate_config.reasoning_effort
+                    if translate_config.extra_body is not None
+                    and translate_config.extra_body.get("thinking")
+                    and translate_config.extra_body.get("thinking").get("type")
+                    == "enabled"
+                    else None
+                ),
                 extra_body=translate_config.extra_body,
-                timeout=60
+                timeout=60,
             )
         if response:
             translated_text = response.choices[0].message.content
@@ -204,7 +210,7 @@ def update_translation(translation: Translation):
                 "original": translation.original_text,
                 "translated_at": datetime.now(),
                 "need_to_update": False,
-                # "translated_model": 
+                # "translated_model":
             }
         },
         upsert=True,
