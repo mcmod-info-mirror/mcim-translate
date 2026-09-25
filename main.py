@@ -93,7 +93,8 @@ def check_modrinth_translations():
         f"Totally Translated {success_count} modrinth projects, failed {failed_count}, used {total_used_token} tokens."
     )
     if len(translated_ids) > 0:
-        send_result(Platform.MODRINTH, translated_ids)
+        if config.telegram.enable:
+            send_result(Platform.MODRINTH, translated_ids)
         log.info("Modrinth translation check completed.")
 
 
@@ -106,7 +107,8 @@ def check_curseforge_translations():
         f"Totally Translated {success_count} curseforge projects, failed {failed_count}, used {total_used_token} tokens."
     )
     if len(translated_ids) > 0:
-        send_result(Platform.CURSEFORGE, translated_ids)
+        if config.telegram.enable:
+            send_result(Platform.CURSEFORGE, translated_ids)
         log.info("CurseForge translation check completed.")
 
 if __name__ == "__main__":
