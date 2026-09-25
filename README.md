@@ -60,3 +60,7 @@ URL 参数：`modId`
 - [20250204 更新补全翻译](https://github.com/mcmod-info-mirror/data/releases/tag/20250124)
 - [20250818 更新补全翻译](https://github.com/mcmod-info-mirror/data/releases/tag/20250818)
 - 此后不再再次更新日志，自动化更新翻译
+
+## 部署
+
+Docker Hub：`z0z0r4/mcim-translate:latest`
