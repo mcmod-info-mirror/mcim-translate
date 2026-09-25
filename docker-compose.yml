@@ -3,8 +3,40 @@ services:
     container_name: translate
     image: z0z0r4/mcim-translate:latest
     restart: always
-    volumes:
-      - ./config.json:/config.json
+    # volumes:
+    #   - ./config.json:/config.json:ro
+    environment:
+      DEBUG: ${DEBUG:-false}
+
+      MONGODB_HOST: ${MONGODB_HOST:-mongodb}
+      MONGODB_PORT: ${MONGODB_PORT:-27017}
+      MONGODB_AUTH: ${MONGODB_AUTH:-true}
+      MONGODB_USER: ${MONGODB_USER:-}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD:-}
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-database}
+
+      TRANSLATE_API_KEY: ${TRANSLATE_API_KEY:-}
+      TRANSLATE_BASE_URL: ${TRANSLATE_BASE_URL:-https://api.deepseek.com}
+      TRANSLATE_MODEL: ${TRANSLATE_MODEL:-deepseek-v4-flash}
+      TRANSLATE_ENABLE_BACKUP: ${TRANSLATE_ENABLE_BACKUP:-false}
+      TRANSLATE_BACKUP_MODEL: ${TRANSLATE_BACKUP_MODEL:-}
+      TRANSLATE_BACKUP_API_KEY: ${TRANSLATE_BACKUP_API_KEY:-}
+      TRANSLATE_BACKUP_BASE_URL: ${TRANSLATE_BACKUP_BASE_URL:-}
+      TRANSLATE_TEMPERATURE: ${TRANSLATE_TEMPERATURE:-0.6}
+      TRANSLATE_TARGET_LANGUAGE: ${TRANSLATE_TARGET_LANGUAGE:-中文}
+      TRANSLATE_CHUNK_SIZE: ${TRANSLATE_CHUNK_SIZE:-2}
+      TRANSLATE_MULTIPROCESS: ${TRANSLATE_MULTIPROCESS:-false}
+      TRANSLATE_EXTRA_BODY: ${TRANSLATE_EXTRA_BODY:-}
+      TRANSLATE_REASONING_EFFORT: ${TRANSLATE_REASONING_EFFORT:-low}
+
+      TELEGRAM_ENABLE: ${TELEGRAM_ENABLE:-false}
+      TELEGRAM_BOT_API: ${TELEGRAM_BOT_API:-https://api.telegram.org/bot}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+
+      INTERVAL: ${INTERVAL:-86400}
+      CURSEFORGE_CRON: ${CURSEFORGE_CRON:-0 0 * * *}
+      MODRINTH_CRON: ${MODRINTH_CRON:-0 0 * * *}
     deploy:
       resources:
         limits:
